@@ -1,5 +1,6 @@
 package lektion_2;
 
+import java.util.InputMismatchException;
 import java.util.Random;
 import java.util.Scanner;
 
@@ -25,19 +26,28 @@ public class Game {
         // write your code here
 
         Game game = new Game(); //
-        Scanner reader = new Scanner(System.in);
         ConsoleMessanger.printName();
         ConsoleMessanger.printInstructions();
 
-        int consoleChoice = reader.nextInt();
+        try {
 
-        switch (consoleChoice) {
-            case 1:
-                game.playVsAI();
-                break;
-            case 2:
-                game.playVsPlayer();
-                break;
+            int consoleChoice = game.reader.nextInt();
+            switch (consoleChoice) {
+                case 1:
+                    game.playVsAI();
+                    break;
+                case 2:
+                    game.playVsPlayer();
+                    break;
+                case 0:
+                    System.exit(1);
+                    break;
+
+            }
+
+
+        } catch (InputMismatchException nfe) {
+            System.out.println("Invalid input, enter a number!");
         }
 
 
@@ -133,13 +143,12 @@ public class Game {
             int winner = comparePicks(playerChoices, this.playerScores);
 
 
-            if (winner == 0 || winner==  1){
+            if (winner == 0 || winner == 1) {
                 ConsoleMessanger.printWinnerMsg(playerNames[winner]);
                 updatedScores(playerScores, winnerIndex);
                 printScores(playerScores);
-            }
-            else if (winner==3){
-                this.roundLimit = this.roundLimit +1;
+            } else if (winner == 3) {
+                this.roundLimit = this.roundLimit + 1;
             }
         }
     }
@@ -162,16 +171,20 @@ public class Game {
     private int comparePicks(String[] playerChoices, int[] playerScores) {
 
 
+        //p1 picks rock
         if (getValueOfPick(playerChoices[0]) == 0) {
 
 
+            //p2 pick is not rock
             if (getValueOfPick(playerChoices[1]) != 0) {
 
+                //p2 pick is a paper, p2 wins. Paper beats rock
                 if (getValueOfPick(playerChoices[1]) == 1) {
                     this.winnerIndex = 1;
                     return 1;
 
                 }
+                //p2 pick is a scissor, p1 wins. Rock beats Scissors
                 if (getValueOfPick(playerChoices[1]) == 2) {
                     this.winnerIndex = 0;
                     return 0;
@@ -181,12 +194,14 @@ public class Game {
             }
 
 
+            //p2 picks the same pick as p1, Tie, returns 3 which is processed later as a Tie value
             if (getValueOfPick(playerChoices[1]) == 0) {
                 ConsoleMessanger.printTieMsg();
                 return 3;
 
             }
         }
+
 
 
         if (getValueOfPick(playerChoices[0]) == 1) {
@@ -245,6 +260,7 @@ public class Game {
 
     }
 
+    //adds 1 to the winner score based on the index
     private void updatedScores(int[] playerScores, int indexOfWinner) {
 
         for (int i = 0; i < playerScores.length; i++) {
@@ -256,6 +272,7 @@ public class Game {
 
     }
 
+    //will get an int value of a string pick
     private int getValueOfPick(String pick) {
 
         if (pick.equalsIgnoreCase("Rock") || pick.equalsIgnoreCase("1"))
@@ -269,25 +286,28 @@ public class Game {
     }
 
 
+    //will get a string based on the pick
     private String getPickOfValue(int pick) {
         if (pick == 0)
             return "Rock " + ROCK;
         if (pick == 1)
             return "Paper " + PAPER;
         if (pick == 2)
-            return "Scissors "  + SCISSORS;
+            return "Scissors " + SCISSORS;
 
 
         return "Not Valid";
     }
 
 
+    //print the score array
     private void printScores(int[] playerScores) {
 
         System.out.println(playerNames[0] + ": " + playerScores[0]);
         System.out.println(playerNames[1] + ": " + playerScores[1]);
     }
 
+    //Generate random number in range min-max
     public int getRandomNumber(int min, int max) {
         Random random = new Random();
         return random.ints(min, max)
@@ -295,11 +315,10 @@ public class Game {
                 .getAsInt();
     }
 
-    private void clearConsole(){
+    private void clearConsole() {
         try {
             new ProcessBuilder("console", "/c", "cls").inheritIO().start().waitFor();
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             System.out.println(e);
         }
     }
