@@ -14,6 +14,7 @@ public class Exercise {
         System.out.println("Enter String:");
         String s = reader.next();
         System.out.println(stringToInt(s));
+        System.out.println("Hello ");
 
     }
 
